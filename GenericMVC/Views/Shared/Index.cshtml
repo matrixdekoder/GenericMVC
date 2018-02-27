@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Base>
+@using System.Reflection;
+@{
+    ViewData["Title"] = "List of "+ViewBag.TypeName;
+    var props = (List<System.Reflection.PropertyInfo>)ViewBag.props;
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+<a asp-action="Create" class="btn btn-primary">Create new</a>
+<hr />
+<div>
+    <ul class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="pagination-sm"><a asp-action="Index" asp-route-id="@i" asp-route-id1="100">@i</a></li>
+        }
+    </ul>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            @foreach (PropertyInfo item in ViewBag.props)
+            {
+                var display = item.CustomAttributes.FirstOrDefault(k => k.AttributeType == typeof(System.ComponentModel.DataAnnotations.DisplayAttribute));
+                <th>
+                    @(display != null ? display.NamedArguments.FirstOrDefault().TypedValue.Value : item.Name)
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @foreach (var prov in props)
+                {
+                    <td>@prov.GetValue(item)</td>
+                }
+                <td>@Html.Partial("_Actions",item)</td>
+            </tr>
+        }
+    </tbody>
+</table>

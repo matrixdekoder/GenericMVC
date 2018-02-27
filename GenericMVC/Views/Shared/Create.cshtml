@@ -1,0 +1,50 @@
+﻿@using System.Reflection;
+@using System.ComponentModel.DataAnnotations.Schema;
+@model Base
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<h2>Crear @ViewBag.TypeName</h2>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Propiedad</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PropertyInfo i in ViewBag.props)
+            {
+                var selected_type = "text";
+                var display = i.CustomAttributes.FirstOrDefault(k => k.AttributeType == typeof(System.ComponentModel.DataAnnotations.DisplayAttribute));
+                if (i.PropertyType == typeof(DateTime))
+                {
+                    selected_type = "date";
+                }
+                else if (i.PropertyType == typeof(double) || i.PropertyType == typeof(int) || i.PropertyType == typeof(float) || i.PropertyType == typeof(decimal))
+                {
+                    selected_type = "number";
+                }
+                <tr>
+                    <td>
+                        @(display != null ? display.NamedArguments.FirstOrDefault().TypedValue.Value : i.Name)
+                    </td>
+                    <td>
+                        @if (i.CustomAttributes.Any(ia => ia.AttributeType == typeof(ForeignKeyAttribute)))
+                        {
+                            @Html.DropDownList(i.Name, (IEnumerable<SelectListItem>)ViewData[i.Name], new { @class = "form-control", size = 1 })
+                        }
+                        else
+                        {
+                            <input type="@selected_type" name="@i.Name" class="form-control" />
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" value="Crear" class="btn btn-primary" />
+}

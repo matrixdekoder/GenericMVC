@@ -1,0 +1,36 @@
+﻿@using System.Reflection;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+@model Base
+
+<h2>Delete @ViewBag.TypeName</h2>
+<h4>Details</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PropertyInfo i in ViewBag.props)
+        {
+            var display = i.CustomAttributes.FirstOrDefault(k => k.AttributeType == typeof(System.ComponentModel.DataAnnotations.DisplayAttribute));
+
+            <tr>
+                <td>
+                    @(display != null ? display.NamedArguments.FirstOrDefault().TypedValue.Value : i.Name)
+                </td>
+                <td>
+                    @i.GetValue(Model)
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+@using (Html.BeginForm(FormMethod.Post))
+{
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="submit" value="Delete" class="btn btn-danger" />
+}

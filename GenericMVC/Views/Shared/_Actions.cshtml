@@ -1,0 +1,5 @@
+﻿@model Base
+
+@Html.ActionLink("Editar", "Edit", new {id = Model.Id},new {@class = "btn btn-success" })
+@Html.ActionLink("Detalles", "Details", new { id = Model.Id }, new { @class = "btn btn-primary" })
+@Html.ActionLink("Eliminar", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
